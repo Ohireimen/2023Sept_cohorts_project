@@ -15,7 +15,25 @@ pipeline {
         
         stage('Deploy to Tomcat') {
             steps {
-deploy adapters: [tomcat9(credentialsId: '0e04234c-bdb4-4ec1-9063-ac61cafc40d7', path: '', url: 'http://13.57.41.218:8080/')], contextPath: 'webpp', war: '**/*.war'            }
+pipeline {
+    agent any
+
+    stages {
+        stage('Test') {
+            steps {
+                sh 'cd SampleWebApp mvn test'
+            }
         }
+        stage('Build') {
+            steps {
+                sh 'cd SampleWebApp && mvn clean package'
+            }
+        }
+        
+        stage('Deploy to Tomcat') {
+            steps {
+deploy adapters: [tomcat9(credentialsId: 'fcc04673-4862-456b-a469-cce726c4fdec', path: '', url: 'http://13.57.13.118:8080/')], contextPath: null, war: '**/*.war'        }
+    }
+}
     }
 }
